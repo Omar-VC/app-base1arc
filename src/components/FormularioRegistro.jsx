@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth, db } from "../firebase/firebase";
@@ -20,9 +21,6 @@ const FormularioRegistro = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  // --------------------------------------------
-  // HANDLE REGISTRO
-  // --------------------------------------------
   const handleRegistro = async () => {
     if (!tipo || !email || !password || !nombre) {
       alert("Completa todos los campos obligatorios");
@@ -30,21 +28,20 @@ const FormularioRegistro = () => {
     }
 
     try {
-      // 1) Crear usuario en Firebase Auth
+      // Crear usuario en Firebase Auth
       const cred = await createUserWithEmailAndPassword(auth, email, password);
       const uid = cred.user.uid;
 
-      // 2) Crear documento GENERAL en "usuarios" (clave para LOGIN)
-      await setDoc(doc(db, "usuarios", uid), {
-        uid,
-        email,
-        rol: tipo,
-        nombre,
-        creadoEn: new Date(),
-      });
-
-      // 3) Crear documento según el tipo
       if (tipo === "manager") {
+        // Manager sigue igual: se crea en "managers" y "usuarios"
+        await setDoc(doc(db, "usuarios", uid), {
+          uid,
+          email,
+          rol: tipo,
+          nombre,
+          creadoEn: new Date(),
+        });
+
         await setDoc(doc(db, "managers", uid), {
           uid,
           nombre,
@@ -54,7 +51,8 @@ const FormularioRegistro = () => {
       }
 
       if (tipo === "jugador") {
-        await setDoc(doc(db, "jugadores", uid), {
+        // Jugador va a "aprobaciones" en estado pendiente
+        await setDoc(doc(db, "aprobaciones", uid), {
           uid,
           nombre,
           apellido,
@@ -67,11 +65,12 @@ const FormularioRegistro = () => {
           telefono,
           dni,
           email,
+          estado: "pendiente", // clave para aprobar/rechazar
           creadoEn: new Date(),
         });
       }
 
-      alert("Usuario registrado correctamente");
+      alert("Registro completado. Si eres jugador, espera aprobación del manager.");
       navigate("/login");
 
     } catch (error) {
