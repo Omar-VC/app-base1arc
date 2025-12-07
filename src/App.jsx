@@ -23,7 +23,7 @@ function App() {
 
   return (
     <>
-      {!shouldHideNavbar && <Navbar rol={usuario?.rol} />}
+      {!shouldHideNavbar && <Navbar usuario={usuario} /> }
 
       <Routes>
         <Route path="/" element={<Login setUsuario={setUsuario}  />} />
