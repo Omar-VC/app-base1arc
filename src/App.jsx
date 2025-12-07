@@ -1,4 +1,5 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -11,19 +12,22 @@ import Ficha from "./pages/Ficha";
 
 function App() {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  // Estado global de sesión
+  const [usuario, setUsuario] = useState(null); // { rol: 'manager' o 'jugador', uid, email }
 
   // Rutas donde NO debe mostrarse el navbar
-  const hideNavbarRoutes = ["/login", "/registro"];
-
+  const hideNavbarRoutes = ["/", "/login", "/registro"];
   const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname);
 
   return (
     <>
-      {!shouldHideNavbar && <Navbar />}
+      {!shouldHideNavbar && <Navbar rol={usuario?.rol} />}
 
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Login setUsuario={setUsuario}  />} />
+        <Route path="/login" element={<Login setUsuario={setUsuario} />} />
         <Route path="/registro" element={<Registro />} />
         <Route path="/jugador" element={<HomeJugador />} />
         <Route path="/manager" element={<HomeManager />} />

@@ -20,24 +20,42 @@ const FormularioRegistro = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
+  // --------------------------------------------
+  // HANDLE REGISTRO
+  // --------------------------------------------
   const handleRegistro = async () => {
     if (!tipo || !email || !password || !nombre) {
-      alert("Completa los campos obligatorios");
+      alert("Completa todos los campos obligatorios");
       return;
     }
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const uid = userCredential.user.uid;
+      // 1) Crear usuario en Firebase Auth
+      const cred = await createUserWithEmailAndPassword(auth, email, password);
+      const uid = cred.user.uid;
 
+      // 2) Crear documento GENERAL en "usuarios" (clave para LOGIN)
+      await setDoc(doc(db, "usuarios", uid), {
+        uid,
+        email,
+        rol: tipo,
+        nombre,
+        creadoEn: new Date(),
+      });
+
+      // 3) Crear documento según el tipo
       if (tipo === "manager") {
         await setDoc(doc(db, "managers", uid), {
+          uid,
           nombre,
           email,
           creadoEn: new Date(),
         });
-      } else if (tipo === "jugador") {
+      }
+
+      if (tipo === "jugador") {
         await setDoc(doc(db, "jugadores", uid), {
+          uid,
           nombre,
           apellido,
           edad,
@@ -53,10 +71,11 @@ const FormularioRegistro = () => {
         });
       }
 
-      alert(`${tipo === "manager" ? "Manager" : "Jugador"} registrado con éxito`);
+      alert("Usuario registrado correctamente");
       navigate("/login");
+
     } catch (error) {
-      console.error("Error al registrar:", error.message);
+      console.error("ERROR REGISTRO:", error.message);
       alert("Error al registrar: " + error.message);
     }
   };
@@ -71,6 +90,7 @@ const FormularioRegistro = () => {
       </select>
 
       <input type="text" placeholder="Nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} className="border p-2 rounded" />
+
       {tipo === "jugador" && (
         <>
           <input type="text" placeholder="Apellido" value={apellido} onChange={(e) => setApellido(e.target.value)} className="border p-2 rounded" />

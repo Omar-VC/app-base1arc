@@ -1,26 +1,32 @@
+
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase/firebase"; // ajusta la ruta según tu proyecto
 
 export default function Ficha() {
   const { id } = useParams();
-
-  // Datos de ejemplo
-  const [jugador, setJugador] = useState({
-    nombre: "Juan",
-    apellido: "Pérez",
-    edad: 17,
-    altura: "1.75 m",
-    peso: "70 kg",
-    categoria: "M17",
-    posicion: "Scrum",
-    historialLesiones: "Rodilla 2023",
-    telefono: "3844-123456",
-    dni: "12345678",
-    foto: null, // por ahora vacío
-  });
-
+  const [jugador, setJugador] = useState(null);
   const [editando, setEditando] = useState(false);
   const [fotoPreview, setFotoPreview] = useState(null);
+
+  useEffect(() => {
+    const fetchJugador = async () => {
+      try {
+        const docRef = doc(db, "jugadores", id); // colección "jugadores"
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setJugador(docSnap.data());
+        } else {
+          console.log("No existe el jugador con ese ID");
+        }
+      } catch (error) {
+        console.error("Error al obtener jugador:", error);
+      }
+    };
+
+    fetchJugador();
+  }, [id]);
 
   const handleChange = (campo, valor) => {
     setJugador({ ...jugador, [campo]: valor });
@@ -36,14 +42,16 @@ export default function Ficha() {
 
   const guardarCambios = () => {
     setEditando(false);
-    // Aquí luego se puede guardar en Firebase
     console.log("Datos actualizados:", jugador);
+    // luego se puede guardar en Firebase
   };
+
+  if (!jugador) return <div className="p-5">Cargando jugador...</div>;
 
   return (
     <div className="p-5 max-w-3xl mx-auto">
       <h1 className="text-2xl font-bold mb-4 text-center">
-        Ficha del Jugador {id}
+        Ficha del Jugador {jugador.nombre} {jugador.apellido}
       </h1>
 
       {jugador.foto && (
@@ -57,6 +65,10 @@ export default function Ficha() {
       <div className="flex flex-col gap-3">
         {Object.entries(jugador).map(([key, value]) => {
           if (key === "foto") return null;
+          // Evitar mostrar campos timestamp directamente
+          if (value && typeof value === "object" && "seconds" in value) {
+            value = new Date(value.seconds * 1000).toLocaleDateString();
+          }
           return (
             <div key={key} className="flex justify-between border p-2 rounded">
               <span className="capitalize">{key.replace(/([A-Z])/g, " $1")}</span>
