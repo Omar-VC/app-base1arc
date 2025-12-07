@@ -17,7 +17,6 @@ const Navbar = ({ usuario }) => {
 
         <div className="flex gap-6">
 
-          {/* HOME según el usuario */}
           <Link 
             to={homePath}
             className="hover:text-gray-200 transition"
@@ -25,7 +24,15 @@ const Navbar = ({ usuario }) => {
             Home
           </Link>
 
-          {/* SALIR = vuelve al login */}
+          {usuario?.rol === "manager" && (
+            <Link 
+              to="/aprobaciones"
+              className="hover:text-gray-200 transition"
+            >
+              Aprobaciones
+            </Link>
+          )}
+
           <Link 
             to="/login"
             className="hover:text-gray-200 transition"

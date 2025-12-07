@@ -9,15 +9,14 @@ import HomeManager from "./pages/HomeManager";
 import Jugadores from "./pages/Jugadores";
 import Cuotas from "./pages/Cuotas";
 import Ficha from "./pages/Ficha";
+import Aprobaciones from "./pages/Aprobaciones"; // ← IMPORTANTE
 
 function App() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Estado global de sesión
-  const [usuario, setUsuario] = useState(null); // { rol: 'manager' o 'jugador', uid, email }
+  const [usuario, setUsuario] = useState(null);
 
-  // Rutas donde NO debe mostrarse el navbar
   const hideNavbarRoutes = ["/", "/login", "/registro"];
   const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname);
 
@@ -26,7 +25,7 @@ function App() {
       {!shouldHideNavbar && <Navbar usuario={usuario} /> }
 
       <Routes>
-        <Route path="/" element={<Login setUsuario={setUsuario}  />} />
+        <Route path="/" element={<Login setUsuario={setUsuario} />} />
         <Route path="/login" element={<Login setUsuario={setUsuario} />} />
         <Route path="/registro" element={<Registro />} />
         <Route path="/jugador" element={<HomeJugador />} />
@@ -34,6 +33,9 @@ function App() {
         <Route path="/jugadores" element={<Jugadores />} />
         <Route path="/jugador/:id/cuotas" element={<Cuotas />} />
         <Route path="/jugador/:id/ficha" element={<Ficha />} />
+
+        {/* NUEVA RUTA */}
+        <Route path="/aprobaciones" element={<Aprobaciones />} />
       </Routes>
     </>
   );
