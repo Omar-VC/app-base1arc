@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase"; // ajusta la ruta según tu proyecto
+import { updateDoc } from "firebase/firestore";
 
 export default function Ficha() {
   const { id } = useParams();
@@ -40,11 +41,18 @@ export default function Ficha() {
     }
   };
 
-  const guardarCambios = () => {
+  const guardarCambios = async () => {
+  try {
+    const docRef = doc(db, "jugadores", id);
+    await updateDoc(docRef, jugador);
+
     setEditando(false);
-    console.log("Datos actualizados:", jugador);
-    // luego se puede guardar en Firebase
-  };
+    alert("Cambios guardados correctamente.");
+  } catch (error) {
+    console.error("Error al guardar cambios:", error);
+    alert("Hubo un error al guardar los cambios.");
+  }
+};
 
   if (!jugador) return <div className="p-5">Cargando jugador...</div>;
 
