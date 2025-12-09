@@ -10,6 +10,7 @@ import Jugadores from "./pages/Jugadores";
 import Cuotas from "./pages/Cuotas";
 import Ficha from "./pages/Ficha";
 import Aprobaciones from "./pages/Aprobaciones"; // ← IMPORTANTE
+import CuotasJugadorWrapper from "./pages/CuotasJugadorWrapper"; // <- IMPORTAR EL WRAPPER
 
 function App() {
   const location = useLocation();
@@ -33,6 +34,7 @@ function App() {
         <Route path="/jugadores" element={<Jugadores />} />
         <Route path="/jugador/:id/cuotas" element={<Cuotas />} />
         <Route path="/jugador/:id/ficha" element={<Ficha />} />
+        <Route path="/jugador/:id/mis-cuotas" element={<CuotasJugadorWrapper />} />
 
         {/* NUEVA RUTA */}
         <Route path="/aprobaciones" element={<Aprobaciones />} />
