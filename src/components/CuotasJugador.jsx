@@ -22,26 +22,32 @@ export default function CuotasJugador({ jugadorId }) {
 
   return (
     <div className="p-5 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold text-center mb-4">Mis Cuotas</h1>
+      <h1 className="text-3xl font-bold text-center mb-6 text-[#365486] drop-shadow-md">
+        Mis Cuotas
+      </h1>
 
       {deudaTotal > 0 && (
-        <div className="mb-4 p-3 bg-red-100 text-red-800 rounded font-medium">
+        <div className="mb-4 p-3 rounded-xl bg-red-100 text-red-800 font-medium shadow">
           Deuda total: ${deudaTotal}
         </div>
       )}
 
       {cuotas.length === 0 ? (
-        <p className="text-gray-600">Aún no tienes cuotas asignadas.</p>
+        <p className="text-gray-600 text-center">
+          Aún no tienes cuotas asignadas.
+        </p>
       ) : (
         <div className="flex flex-col gap-3">
           {cuotas.map(c => (
             <div
               key={c.id}
-              className={`border p-3 rounded shadow flex justify-between items-center ${
-                c.estado === "Debe" ? "bg-red-100" : "bg-green-100"
+              className={`p-4 rounded-xl shadow-md flex justify-between items-center text-white ${
+                c.estado === "Debe"
+                  ? "bg-gradient-to-r from-red-500 via-red-400 to-red-500"
+                  : "bg-gradient-to-r from-green-500 via-green-400 to-green-500"
               }`}
             >
-              <div>
+              <div className="flex flex-col gap-1">
                 <p><strong>Mes:</strong> {c.mes}</p>
                 <p><strong>Monto:</strong> ${c.monto}</p>
                 <p><strong>Estado:</strong> {c.estado}</p>
