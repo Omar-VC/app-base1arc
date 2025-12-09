@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { db } from "../firebase/firebase";
 import { collection, getDocs } from "firebase/firestore";
+import { GiAmericanFootballBall } from "react-icons/gi"; // pelota tipo rugby/football
+
 
 const Navbar = ({ usuario }) => {
   const [pendientesCount, setPendientesCount] = useState(0);
@@ -25,9 +27,12 @@ const Navbar = ({ usuario }) => {
   return (
     <nav className="w-full bg-gradient-to-r from-[#365486] via-[#7FC7D9] to-[#365486] text-white shadow-lg">
       <div className="max-w-6xl mx-auto flex justify-between items-center px-6 py-4">
-        <h1 className="text-2xl font-bold tracking-wide text-white drop-shadow-md">
-          APP Base1 (ARC)
-        </h1>
+        <div className="flex items-center gap-3">
+          <GiAmericanFootballBall className="text-white w-8 h-8 drop-shadow-md" />
+          <h1 className="text-2xl font-bold tracking-wide text-white drop-shadow-md">
+            Añatuya Rugby Club
+          </h1>
+        </div>
 
         <div className="flex gap-6 items-center">
           <Link 

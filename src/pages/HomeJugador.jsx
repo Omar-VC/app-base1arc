@@ -17,25 +17,27 @@ export default function HomeJugador() {
   }, []);
 
   return (
-    <div className="p-5 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6 text-center">
-        Bienvenido al Home del Jugador
+    <div className="p-5 max-w-3xl mx-auto">
+      <h1 className="text-3xl font-bold mb-8 text-center text-[#365486] drop-shadow-md">
+        Bienvenido a tu Home, jugador
       </h1>
 
-      {/* Tarjeta Ver mis Cuotas */}
-      <div
-        onClick={() => navigate(`/jugador/${jugadorId}/mis-cuotas`)}
-        className="cursor-pointer border p-5 rounded shadow text-center bg-blue-600 text-white hover:bg-blue-700"
-      >
-        Ver mis Cuotas
-      </div>
+      <div className="grid gap-6">
+        {/* Tarjeta Ver mis Cuotas */}
+        <div
+          onClick={() => navigate(`/jugador/${jugadorId}/mis-cuotas`)}
+          className="cursor-pointer p-6 rounded-xl shadow-lg bg-gradient-to-r from-[#365486] via-[#7FC7D9] to-[#365486] text-white text-center font-semibold text-lg hover:scale-105 transform transition-all duration-300 drop-shadow-md"
+        >
+          Ver mis Cuotas
+        </div>
 
-      {/* Tarjeta Mi Ficha */}
-      <div
-        onClick={() => navigate(`/jugador/${jugadorId}/ficha`)}
-        className="cursor-pointer border p-5 rounded shadow text-center bg-green-600 text-white hover:bg-green-700 mt-4"
-      >
-        Mi Ficha
+        {/* Tarjeta Mi Ficha */}
+        <div
+          onClick={() => navigate(`/jugador/${jugadorId}/ficha`)}
+          className="cursor-pointer p-6 rounded-xl shadow-lg bg-gradient-to-r from-[#0F1035] via-[#7FC7D9] to-[#0F1035] text-white text-center font-semibold text-lg hover:scale-105 transform transition-all duration-300 drop-shadow-md"
+        >
+          Mi Ficha
+        </div>
       </div>
     </div>
   );

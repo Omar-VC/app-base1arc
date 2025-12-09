@@ -13,7 +13,6 @@ import { db } from "../firebase/firebase";
 
 export default function Cuotas() {
   const { id } = useParams();
-  console.log("ID LLEGANDO A CUOTAS:", id);
   const [jugador, setJugador] = useState(null);
   const [cuotas, setCuotas] = useState([]);
   const [monto, setMonto] = useState("");
@@ -21,7 +20,6 @@ export default function Cuotas() {
   const [estado, setEstado] = useState("Debe");
   const [editandoId, setEditandoId] = useState(null);
 
-  // Cargar datos del jugador
   useEffect(() => {
     const fetchPlayer = async () => {
       const ref = doc(db, "jugadores", id);
@@ -32,7 +30,6 @@ export default function Cuotas() {
     fetchPlayer();
   }, [id]);
 
-  // Cargar cuotas
   useEffect(() => {
     const fetchCuotas = async () => {
       const ref = collection(db, "jugadores", id, "cuotas");
@@ -43,7 +40,6 @@ export default function Cuotas() {
     fetchCuotas();
   }, [id]);
 
-  // Crear o editar cuota
   const handleGuardar = async () => {
     const ref = collection(db, "jugadores", id, "cuotas");
 
@@ -56,33 +52,23 @@ export default function Cuotas() {
       await updateDoc(doc(ref, editandoId), { monto, mes, estado });
       setEditandoId(null);
     } else {
-      await addDoc(ref, {
-        monto,
-        mes,
-        estado,
-        fechaAsignada: new Date(),
-      });
+      await addDoc(ref, { monto, mes, estado, fechaAsignada: new Date() });
     }
 
     setMonto("");
     setMes("");
     setEstado("Debe");
 
-    // Recargar
     const snapshot = await getDocs(ref);
-    const lista = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-    setCuotas(lista);
+    setCuotas(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
   };
 
-  // Eliminar
   const handleEliminar = async (cuotaId) => {
     const ref = doc(db, "jugadores", id, "cuotas", cuotaId);
     await deleteDoc(ref);
-
     setCuotas(cuotas.filter((c) => c.id !== cuotaId));
   };
 
-  // Preparar edición
   const handleEditar = (cuota) => {
     setMonto(cuota.monto);
     setMes(cuota.mes);
@@ -90,7 +76,6 @@ export default function Cuotas() {
     setEditandoId(cuota.id);
   };
 
-  // Cambiar estado de la cuota
   const toggleEstado = async (cuotaId, estadoActual) => {
     const ref = doc(db, "jugadores", id, "cuotas", cuotaId);
     const nuevoEstado = estadoActual === "Debe" ? "Pagado" : "Debe";
@@ -106,19 +91,19 @@ export default function Cuotas() {
 
   return (
     <div className="p-5 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold text-center mb-4">
+      <h1 className="text-3xl font-bold text-center mb-6 text-[#365486] drop-shadow-md">
         Cuotas de {jugador?.nombre} {jugador?.apellido}
       </h1>
 
       {deudaTotal > 0 && (
-        <div className="mb-4 p-3 bg-red-100 text-red-800 rounded font-medium">
+        <div className="mb-5 p-4 rounded-xl bg-red-200 text-red-900 font-semibold shadow-md text-center drop-shadow-sm">
           Monto total de deuda: ${deudaTotal}
         </div>
       )}
 
       {/* Formulario */}
-      <div className="border p-4 rounded shadow mb-5">
-        <h2 className="text-xl font-semibold mb-3">
+      <div className="p-5 rounded-xl shadow-lg bg-gradient-to-r from-[#0F1035] via-[#7FC7D9] to-[#0F1035] text-white mb-6">
+        <h2 className="text-xl font-semibold mb-4">
           {editandoId ? "Editar cuota" : "Asignar nueva cuota"}
         </h2>
 
@@ -126,7 +111,7 @@ export default function Cuotas() {
           <input
             type="text"
             placeholder="Mes (Ej: Enero)"
-            className="border p-2 rounded"
+            className="p-2 rounded-md text-black"
             value={mes}
             onChange={(e) => setMes(e.target.value)}
           />
@@ -134,13 +119,13 @@ export default function Cuotas() {
           <input
             type="number"
             placeholder="Monto"
-            className="border p-2 rounded"
+            className="p-2 rounded-md text-black"
             value={monto}
             onChange={(e) => setMonto(e.target.value)}
           />
 
           <select
-            className="border p-2 rounded"
+            className="p-2 rounded-md text-black"
             value={estado}
             onChange={(e) => setEstado(e.target.value)}
           >
@@ -150,7 +135,7 @@ export default function Cuotas() {
 
           <button
             onClick={handleGuardar}
-            className="bg-blue-600 text-white p-2 rounded"
+            className="bg-white/20 hover:bg-white/30 p-2 rounded-lg font-semibold transition"
           >
             {editandoId ? "Guardar cambios" : "Asignar cuota"}
           </button>
@@ -158,19 +143,23 @@ export default function Cuotas() {
       </div>
 
       {/* Lista de cuotas */}
-      <h2 className="text-xl font-semibold mb-2">Historial de cuotas</h2>
+      <h2 className="text-2xl font-semibold mb-4 text-[#365486] drop-shadow-sm">
+        Historial de cuotas
+      </h2>
 
       {cuotas.length === 0 ? (
-        <p className="text-gray-600">
+        <p className="text-center text-gray-500">
           Este jugador aún no tiene cuotas asignadas.
         </p>
       ) : (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-4">
           {cuotas.map((cuota) => (
             <div
               key={cuota.id}
-              className={`border p-3 rounded shadow flex justify-between items-center ${
-                cuota.estado === "Debe" ? "bg-red-100" : "bg-green-100"
+              className={`p-4 rounded-xl shadow-md flex justify-between items-center transition-transform transform hover:scale-105 ${
+                cuota.estado === "Debe"
+                  ? "bg-red-100 text-red-900"
+                  : "bg-green-100 text-green-900"
               }`}
             >
               <div>
@@ -185,11 +174,13 @@ export default function Cuotas() {
                 </p>
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex flex-col gap-2">
                 <button
                   onClick={() => toggleEstado(cuota.id, cuota.estado)}
-                  className={`px-3 py-1 rounded text-white ${
-                    cuota.estado === "Debe" ? "bg-green-600" : "bg-red-600"
+                  className={`px-3 py-1 rounded font-semibold text-white ${
+                    cuota.estado === "Debe"
+                      ? "bg-green-600 hover:bg-green-700"
+                      : "bg-red-600 hover:bg-red-700"
                   }`}
                 >
                   Marcar {cuota.estado === "Debe" ? "Pagado" : "Debe"}
@@ -197,14 +188,14 @@ export default function Cuotas() {
 
                 <button
                   onClick={() => handleEditar(cuota)}
-                  className="bg-yellow-500 text-white px-3 py-1 rounded"
+                  className="bg-yellow-500 hover:bg-yellow-600 px-3 py-1 rounded font-semibold text-white"
                 >
                   Editar
                 </button>
 
                 <button
                   onClick={() => handleEliminar(cuota.id)}
-                  className="bg-gray-700 text-white px-3 py-1 rounded"
+                  className="bg-gray-700 hover:bg-gray-800 px-3 py-1 rounded font-semibold text-white"
                 >
                   Eliminar
                 </button>
