@@ -71,28 +71,37 @@ export default function Ficha() {
       )}
 
       <div className="flex flex-col gap-3">
-        {Object.entries(jugador).map(([key, value]) => {
-          if (key === "foto") return null;
-          // Evitar mostrar campos timestamp directamente
-          if (value && typeof value === "object" && "seconds" in value) {
-            value = new Date(value.seconds * 1000).toLocaleDateString();
-          }
-          return (
-            <div key={key} className="flex justify-between border p-2 rounded">
-              <span className="capitalize">{key.replace(/([A-Z])/g, " $1")}</span>
-              {editando ? (
-                <input
-                  type="text"
-                  value={value}
-                  onChange={(e) => handleChange(key, e.target.value)}
-                  className="border px-2 py-1 rounded"
-                />
-              ) : (
-                <span>{value}</span>
-              )}
-            </div>
-          );
-        })}
+            {Object.entries(jugador).map(([key, value]) => {
+
+              // ❌ Campos que NO se muestran
+              const camposOcultos = ["uid", "id", "estado", "creadoEn"];
+              if (camposOcultos.includes(key)) return null;
+
+              // Ocultar foto (ya la mostrás arriba)
+              if (key === "foto") return null;
+
+              // Formatear timestamps
+              if (value && typeof value === "object" && "seconds" in value) {
+                value = new Date(value.seconds * 1000).toLocaleDateString();
+              }
+
+              return (
+                <div key={key} className="flex justify-between border p-2 rounded">
+                  <span className="capitalize">{key.replace(/([A-Z])/g, " $1")}</span>
+                  {editando ? (
+                    <input
+                      type="text"
+                      value={value}
+                      onChange={(e) => handleChange(key, e.target.value)}
+                      className="border px-2 py-1 rounded"
+                    />
+                  ) : (
+                    <span>{value}</span>
+                  )}
+                </div>
+              );
+            })}
+
 
         {editando && (
           <div className="flex flex-col">
