@@ -10,7 +10,7 @@ export default function FichaJugador({ jugadorId }) {
       if (!jugadorId) return;
       const ref = doc(db, "jugadores", jugadorId);
       const snapshot = await getDoc(ref);
-      if (snapshot.exists()) setFicha(snapshot.data().ficha || {});
+      if (snapshot.exists()) setFicha(snapshot.data()); // <--- tomo todo el doc
     };
     fetchFicha();
   }, [jugadorId]);
@@ -25,15 +25,20 @@ export default function FichaJugador({ jugadorId }) {
         <p className="text-gray-600">Tu ficha aún no ha sido completada.</p>
       ) : (
         <div className="flex flex-col gap-3">
-          {Object.entries(ficha).map(([key, value]) => (
-            <div
-              key={key}
-              className="border p-3 rounded shadow flex justify-between"
-            >
-              <strong className="capitalize">{key}:</strong>
-              <span>{value}</span>
-            </div>
-          ))}
+          {Object.entries(ficha).map(([key, value]) => {
+            const camposOcultos = ["uid", "rol"];
+            if (camposOcultos.includes(key)) return null;
+
+            return (
+              <div
+                key={key}
+                className="border p-3 rounded shadow flex justify-between"
+              >
+                <strong className="capitalize">{key}:</strong>
+                <span>{value}</span>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

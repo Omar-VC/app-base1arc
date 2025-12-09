@@ -1,7 +1,6 @@
-import { useParams } from "react-router-dom";
 import FichaJugador from "../components/FichaJugador";
 
-export default function FichaJugadorWrapper() {
-  const { id } = useParams();
-  return <FichaJugador jugadorId={id} />;
+export default function FichaJugadorWrapper({ usuario }) {
+  if (!usuario) return <p>Cargando...</p>;
+  return <FichaJugador jugadorId={usuario.uid} />;
 }

@@ -11,10 +11,13 @@ export default function Ficha({ usuario }) {
 
   const esManager = usuario?.rol === "manager";
 
+  // ✅ Si es jugador, ignorar el ID de la URL
+  const jugadorId = esManager ? id : usuario.uid;
+
   useEffect(() => {
     const fetchJugador = async () => {
       try {
-        const docRef = doc(db, "jugadores", id);
+        const docRef = doc(db, "jugadores", jugadorId);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setJugador(docSnap.data());
@@ -24,7 +27,7 @@ export default function Ficha({ usuario }) {
       }
     };
     fetchJugador();
-  }, [id]);
+  }, [jugadorId]);
 
   const handleChange = (campo, valor) => {
     setJugador({ ...jugador, [campo]: valor });
@@ -40,7 +43,7 @@ export default function Ficha({ usuario }) {
 
   const guardarCambios = async () => {
     try {
-      const docRef = doc(db, "jugadores", id);
+      const docRef = doc(db, "jugadores", jugadorId);
       await updateDoc(docRef, jugador);
       setEditando(false);
       alert("Cambios guardados correctamente.");
@@ -88,6 +91,7 @@ export default function Ficha({ usuario }) {
               <span className="capitalize">
                 {key.replace(/([A-Z])/g, " $1")}
               </span>
+
               {esManager && editando ? (
                 <input
                   type="text"
