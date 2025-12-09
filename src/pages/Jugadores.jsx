@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { db } from "../firebase/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import { GiAmericanFootballHelmet } from "react-icons/gi";
-
 
 export default function Jugadores() {
   const [jugadores, setJugadores] = useState([]);
@@ -12,42 +10,74 @@ export default function Jugadores() {
   useEffect(() => {
     const fetchJugadores = async () => {
       const querySnapshot = await getDocs(collection(db, "jugadores"));
-      const lista = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const lista = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
       setJugadores(lista);
     };
     fetchJugadores();
   }, []);
 
+  // Contar jugadores por categoría
+  const categorias = jugadores.reduce((acc, jugador) => {
+    const cat = jugador.categoria || "Sin categoría";
+    acc[cat] = (acc[cat] || 0) + 1;
+    return acc;
+  }, {});
+
+  const totalJugadores = jugadores.length;
+
   return (
     <div className="p-5 max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8 text-center text-[#365486] drop-shadow-md">
+      <h1 className="text-3xl font-bold mb-2 text-center text-[#365486] drop-shadow-md">
         Lista de Jugadores
       </h1>
 
+      {/* Subtítulo con conteo total y por categoría */}
+      <div className="mb-4 text-center text-gray-700 font-medium">
+        <p>Jugadores registrados: {totalJugadores}</p>
+        <p>
+          {Object.entries(categorias).map(([cat, count]) => (
+            <span key={cat} className="mr-2">
+              {cat} ({count})
+            </span>
+          ))}
+        </p>
+      </div>
+
       {jugadores.length === 0 ? (
-        <p className="text-center text-gray-500">No hay jugadores registrados.</p>
+        <p className="text-gray-600 text-center">
+          No hay jugadores registrados.
+        </p>
       ) : (
-        <div className="grid gap-6">
+        <div className="flex flex-col gap-4">
           {jugadores.map((jugador) => (
             <div
               key={jugador.id}
-              className="flex justify-between items-center p-5 rounded-xl shadow-lg bg-gradient-to-r from-[#365486] via-[#7FC7D9] to-[#365486] text-white hover:scale-105 transform transition-all duration-300 drop-shadow-md"
+              className="flex justify-between items-center p-4 rounded-xl shadow-md bg-gradient-to-r from-[#7FC7D9] via-[#365486] to-[#0F1035] text-white"
             >
-              <div className="flex items-center gap-3">
-                <GiAmericanFootballHelmet className="w-8 h-8 drop-shadow-sm" />
-
-                <span className="font-semibold text-lg">{jugador.nombre} {jugador.apellido}</span>
+              <div className="flex flex-col">
+                <span className="font-semibold text-lg">
+                  {jugador.nombre} {jugador.apellido}
+                </span>
+                {jugador.categoria && (
+                  <span className="text-sm opacity-80">
+                    {jugador.categoria}
+                  </span>
+                )}
               </div>
-              <div className="flex gap-3">
+
+              <div className="flex gap-2">
                 <button
                   onClick={() => navigate(`/jugador/${jugador.id}/cuotas`)}
-                  className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg font-medium transition"
+                  className="bg-blue-600 px-3 py-1 rounded hover:bg-blue-700 transition"
                 >
                   Ver cuotas
                 </button>
                 <button
                   onClick={() => navigate(`/jugador/${jugador.id}/ficha`)}
-                  className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg font-medium transition"
+                  className="bg-green-600 px-3 py-1 rounded hover:bg-green-700 transition"
                 >
                   Ver ficha
                 </button>

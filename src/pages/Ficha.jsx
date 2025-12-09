@@ -3,11 +3,13 @@ import { useState, useEffect } from "react";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase";
 
-export default function Ficha() {
+export default function Ficha({ usuario }) {
   const { id } = useParams();
   const [jugador, setJugador] = useState(null);
   const [editando, setEditando] = useState(false);
   const [fotoPreview, setFotoPreview] = useState(null);
+
+  const esManager = usuario?.rol === "manager";
 
   useEffect(() => {
     const fetchJugador = async () => {
@@ -49,7 +51,9 @@ export default function Ficha() {
   };
 
   if (!jugador)
-    return <div className="p-5 text-center text-gray-500">Cargando jugador...</div>;
+    return (
+      <div className="p-5 text-center text-gray-500">Cargando jugador...</div>
+    );
 
   return (
     <div className="p-5 max-w-3xl mx-auto">
@@ -81,8 +85,10 @@ export default function Ficha() {
               key={key}
               className="flex justify-between items-center p-3 rounded-xl shadow-md bg-gradient-to-r from-[#0F1035] via-[#7FC7D9] to-[#0F1035] text-white"
             >
-              <span className="capitalize">{key.replace(/([A-Z])/g, " $1")}</span>
-              {editando ? (
+              <span className="capitalize">
+                {key.replace(/([A-Z])/g, " $1")}
+              </span>
+              {esManager && editando ? (
                 <input
                   type="text"
                   value={value}
@@ -96,19 +102,21 @@ export default function Ficha() {
           );
         })}
 
-        {editando && (
+        {esManager && editando && (
           <div className="flex flex-col mt-3">
             <label className="mb-1 font-medium text-white">Foto</label>
             <input type="file" onChange={handleFoto} />
           </div>
         )}
 
-        <button
-          className="mt-5 bg-white/20 hover:bg-white/30 text-white font-semibold px-5 py-2 rounded-lg transition drop-shadow-md"
-          onClick={() => (editando ? guardarCambios() : setEditando(true))}
-        >
-          {editando ? "Guardar cambios" : "Editar datos"}
-        </button>
+        {esManager && (
+          <button
+            className="mt-5 bg-[#365486] hover:bg-[#0F1035] text-white font-semibold px-5 py-2 rounded-lg transition drop-shadow-md"
+            onClick={() => (editando ? guardarCambios() : setEditando(true))}
+          >
+            {editando ? "Guardar cambios" : "Editar datos"}
+          </button>
+        )}
       </div>
     </div>
   );
