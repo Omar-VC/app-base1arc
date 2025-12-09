@@ -37,7 +37,9 @@ export default function CuotasJugador({ jugadorId }) {
           {cuotas.map(c => (
             <div
               key={c.id}
-              className="border p-3 rounded shadow flex justify-between items-center"
+              className={`border p-3 rounded shadow flex justify-between items-center ${
+                c.estado === "Debe" ? "bg-red-100" : "bg-green-100"
+              }`}
             >
               <div>
                 <p><strong>Mes:</strong> {c.mes}</p>

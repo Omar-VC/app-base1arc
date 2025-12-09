@@ -7,11 +7,9 @@ export default function HomeJugador() {
   const navigate = useNavigate();
   const [jugadorId, setJugadorId] = useState(null);
 
-  // Aquí se obtiene el ID del jugador (por ejemplo, desde colección usuarios o auth)
+  // Obtener el ID del jugador (ajustar según lógica de login)
   useEffect(() => {
     const fetchJugador = async () => {
-      // Suponiendo que hay solo 1 jugador logueado y tenemos su ID
-      // Ajusta según tu lógica de login
       const snapshot = await getDocs(collection(db, "jugadores"));
       if (!snapshot.empty) setJugadorId(snapshot.docs[0].id);
     };
@@ -20,13 +18,24 @@ export default function HomeJugador() {
 
   return (
     <div className="p-5 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6 text-center">Bienvenido al Home del Jugador</h1>
+      <h1 className="text-2xl font-bold mb-6 text-center">
+        Bienvenido al Home del Jugador
+      </h1>
 
+      {/* Tarjeta Ver mis Cuotas */}
       <div
         onClick={() => navigate(`/jugador/${jugadorId}/mis-cuotas`)}
         className="cursor-pointer border p-5 rounded shadow text-center bg-blue-600 text-white hover:bg-blue-700"
       >
         Ver mis Cuotas
+      </div>
+
+      {/* Tarjeta Mi Ficha */}
+      <div
+        onClick={() => navigate(`/jugador/${jugadorId}/ficha`)}
+        className="cursor-pointer border p-5 rounded shadow text-center bg-green-600 text-white hover:bg-green-700 mt-4"
+      >
+        Mi Ficha
       </div>
     </div>
   );

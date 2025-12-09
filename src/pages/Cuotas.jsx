@@ -26,7 +26,8 @@ export default function Cuotas() {
     const fetchPlayer = async () => {
       const ref = doc(db, "jugadores", id);
       const snapshot = await getDoc(ref);
-      if (snapshot.exists()) setJugador({ id: snapshot.id, ...snapshot.data() });
+      if (snapshot.exists())
+        setJugador({ id: snapshot.id, ...snapshot.data() });
     };
     fetchPlayer();
   }, [id]);
@@ -36,7 +37,7 @@ export default function Cuotas() {
     const fetchCuotas = async () => {
       const ref = collection(db, "jugadores", id, "cuotas");
       const snapshot = await getDocs(ref);
-      const lista = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const lista = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
       setCuotas(lista);
     };
     fetchCuotas();
@@ -69,7 +70,7 @@ export default function Cuotas() {
 
     // Recargar
     const snapshot = await getDocs(ref);
-    const lista = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const lista = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     setCuotas(lista);
   };
 
@@ -78,7 +79,7 @@ export default function Cuotas() {
     const ref = doc(db, "jugadores", id, "cuotas", cuotaId);
     await deleteDoc(ref);
 
-    setCuotas(cuotas.filter(c => c.id !== cuotaId));
+    setCuotas(cuotas.filter((c) => c.id !== cuotaId));
   };
 
   // Preparar edición
@@ -94,11 +95,13 @@ export default function Cuotas() {
     const ref = doc(db, "jugadores", id, "cuotas", cuotaId);
     const nuevoEstado = estadoActual === "Debe" ? "Pagado" : "Debe";
     await updateDoc(ref, { estado: nuevoEstado });
-    setCuotas(cuotas.map(c => c.id === cuotaId ? { ...c, estado: nuevoEstado } : c));
+    setCuotas(
+      cuotas.map((c) => (c.id === cuotaId ? { ...c, estado: nuevoEstado } : c))
+    );
   };
 
   const deudaTotal = cuotas
-    .filter(c => c.estado === "Debe")
+    .filter((c) => c.estado === "Debe")
     .reduce((sum, c) => sum + Number(c.monto), 0);
 
   return (
@@ -158,24 +161,36 @@ export default function Cuotas() {
       <h2 className="text-xl font-semibold mb-2">Historial de cuotas</h2>
 
       {cuotas.length === 0 ? (
-        <p className="text-gray-600">Este jugador aún no tiene cuotas asignadas.</p>
+        <p className="text-gray-600">
+          Este jugador aún no tiene cuotas asignadas.
+        </p>
       ) : (
         <div className="flex flex-col gap-3">
           {cuotas.map((cuota) => (
             <div
               key={cuota.id}
-              className="border p-3 rounded shadow flex justify-between items-center"
+              className={`border p-3 rounded shadow flex justify-between items-center ${
+                cuota.estado === "Debe" ? "bg-red-100" : "bg-green-100"
+              }`}
             >
               <div>
-                <p><strong>Mes:</strong> {cuota.mes}</p>
-                <p><strong>Monto:</strong> ${cuota.monto}</p>
-                <p><strong>Estado:</strong> {cuota.estado}</p>
+                <p>
+                  <strong>Mes:</strong> {cuota.mes}
+                </p>
+                <p>
+                  <strong>Monto:</strong> ${cuota.monto}
+                </p>
+                <p>
+                  <strong>Estado:</strong> {cuota.estado}
+                </p>
               </div>
 
               <div className="flex gap-2">
                 <button
                   onClick={() => toggleEstado(cuota.id, cuota.estado)}
-                  className="bg-green-600 text-white px-3 py-1 rounded"
+                  className={`px-3 py-1 rounded text-white ${
+                    cuota.estado === "Debe" ? "bg-green-600" : "bg-red-600"
+                  }`}
                 >
                   Marcar {cuota.estado === "Debe" ? "Pagado" : "Debe"}
                 </button>
@@ -189,7 +204,7 @@ export default function Cuotas() {
 
                 <button
                   onClick={() => handleEliminar(cuota.id)}
-                  className="bg-red-600 text-white px-3 py-1 rounded"
+                  className="bg-gray-700 text-white px-3 py-1 rounded"
                 >
                   Eliminar
                 </button>
