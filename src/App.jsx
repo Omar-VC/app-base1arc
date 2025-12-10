@@ -12,6 +12,9 @@ import Ficha from "./pages/Ficha";
 import Aprobaciones from "./pages/Aprobaciones";
 import CuotasJugadorWrapper from "./pages/CuotasJugadorWrapper";
 import FichaJugadorWrapper from "./pages/FichaJugadorWrapper";
+import RegistroManager from "./pages/RegistroManager";
+
+
 
 function App() {
   const location = useLocation();
@@ -41,6 +44,9 @@ function App() {
         <Route path="/jugador/:id/cuotas" element={<Cuotas />} />
         <Route path="/jugador/:id/ficha" element={<Ficha usuario={usuario} />} />
         <Route path="/aprobaciones" element={<Aprobaciones />} />
+
+        <Route path="/registro-manager" element={<RegistroManager />} />
+
 
         {/* Jugador */}
         <Route path="/jugador/:id/mis-cuotas" element={<CuotasJugadorWrapper usuario={usuario} />} />
