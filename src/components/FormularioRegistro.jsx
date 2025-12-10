@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth, db } from "../firebase/firebase";
@@ -6,7 +5,6 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
 
 const FormularioRegistro = () => {
-  const [tipo, setTipo] = useState(""); // "manager" o "jugador"
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
   const [edad, setEdad] = useState("");
@@ -19,58 +17,40 @@ const FormularioRegistro = () => {
   const [dni, setDni] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  // MODO OSCURO
+  const [darkMode, setDarkMode] = useState(false);
+
   const navigate = useNavigate();
 
   const handleRegistro = async () => {
-    if (!tipo || !email || !password || !nombre) {
-      alert("Completa todos los campos obligatorios");
+    if (!email || !password || !nombre) {
+      alert("Completa los campos obligatorios");
       return;
     }
 
     try {
-      // Crear usuario en Firebase Auth
       const cred = await createUserWithEmailAndPassword(auth, email, password);
       const uid = cred.user.uid;
 
-      if (tipo === "manager") {
-        // Manager sigue igual: se crea en "managers" y "usuarios"
-        await setDoc(doc(db, "usuarios", uid), {
-          uid,
-          email,
-          rol: tipo,
-          nombre,
-          creadoEn: new Date(),
-        });
+      await setDoc(doc(db, "aprobaciones", uid), {
+        uid,
+        nombre,
+        apellido,
+        edad,
+        altura,
+        peso,
+        categoria,
+        posicion,
+        historialLesiones,
+        telefono,
+        dni,
+        email,
+        estado: "pendiente",
+        creadoEn: new Date(),
+      });
 
-        await setDoc(doc(db, "managers", uid), {
-          uid,
-          nombre,
-          email,
-          creadoEn: new Date(),
-        });
-      }
-
-      if (tipo === "jugador") {
-        // Jugador va a "aprobaciones" en estado pendiente
-        await setDoc(doc(db, "aprobaciones", uid), {
-          uid,
-          nombre,
-          apellido,
-          edad,
-          altura,
-          peso,
-          categoria,
-          posicion,
-          historialLesiones,
-          telefono,
-          dni,
-          email,
-          estado: "pendiente", // clave para aprobar/rechazar
-          creadoEn: new Date(),
-        });
-      }
-
-      alert("Registro completado. Si eres jugador, espera aprobación del manager.");
+      alert("Registro completado. Espera aprobación del manager.");
       navigate("/login");
 
     } catch (error) {
@@ -80,36 +60,180 @@ const FormularioRegistro = () => {
   };
 
   return (
-    <div className="flex flex-col gap-3">
-      <label className="font-medium">Tipo de usuario</label>
-      <select value={tipo} onChange={(e) => setTipo(e.target.value)} className="border p-2 rounded mb-4">
-        <option value="">Elegir tipo...</option>
-        <option value="manager">Manager</option>
-        <option value="jugador">Jugador</option>
-      </select>
+    <div
+      className={`flex flex-col gap-3 p-4 rounded-lg shadow-md transition ${
+        darkMode ? "bg-gray-900 text-white" : "bg-white text-black"
+      }`}
+    >
 
-      <input type="text" placeholder="Nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} className="border p-2 rounded" />
-
-      {tipo === "jugador" && (
-        <>
-          <input type="text" placeholder="Apellido" value={apellido} onChange={(e) => setApellido(e.target.value)} className="border p-2 rounded" />
-          <input type="number" placeholder="Edad" value={edad} onChange={(e) => setEdad(e.target.value)} className="border p-2 rounded" />
-          <input type="number" placeholder="Altura (cm)" value={altura} onChange={(e) => setAltura(e.target.value)} className="border p-2 rounded" />
-          <input type="number" placeholder="Peso (kg)" value={peso} onChange={(e) => setPeso(e.target.value)} className="border p-2 rounded" />
-          <input type="text" placeholder="Categoría" value={categoria} onChange={(e) => setCategoria(e.target.value)} className="border p-2 rounded" />
-          <input type="text" placeholder="Posición" value={posicion} onChange={(e) => setPosicion(e.target.value)} className="border p-2 rounded" />
-          <input type="text" placeholder="Historial de lesiones" value={historialLesiones} onChange={(e) => setHistorialLesiones(e.target.value)} className="border p-2 rounded" />
-          <input type="text" placeholder="Teléfono" value={telefono} onChange={(e) => setTelefono(e.target.value)} className="border p-2 rounded" />
-          <input type="text" placeholder="DNI" value={dni} onChange={(e) => setDni(e.target.value)} className="border p-2 rounded" />
-        </>
-      )}
-
-      <input type="email" placeholder="Correo" value={email} onChange={(e) => setEmail(e.target.value)} className="border p-2 rounded" />
-      <input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} className="border p-2 rounded" />
-
-      <button onClick={handleRegistro} className="bg-green-600 text-white p-2 rounded hover:bg-green-700">
-        Crear cuenta {tipo === "manager" ? "Manager" : "Jugador"}
+      {/* BOTÓN DE MODO OSCURO */}
+      <button
+        onClick={() => setDarkMode(!darkMode)}
+        className={`mb-2 px-4 py-2 rounded font-semibold transition ${
+          darkMode
+            ? "bg-gray-200 text-black hover:bg-gray-300"
+            : "bg-gray-800 text-white hover:bg-gray-700"
+        }`}
+      >
+        {darkMode ? "Modo Claro" : "Modo Oscuro"}
       </button>
+
+      {/* INPUTS */}
+      <input
+        type="text"
+        placeholder="Nombre"
+        value={nombre}
+        onChange={(e) => setNombre(e.target.value)}
+        className={`border p-2 rounded transition ${
+          darkMode
+            ? "bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+            : "bg-gray-50 border-gray-300 text-black"
+        }`}
+      />
+
+      <input
+        type="text"
+        placeholder="Apellido"
+        value={apellido}
+        onChange={(e) => setApellido(e.target.value)}
+        className={`border p-2 rounded transition ${
+          darkMode
+            ? "bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+            : "bg-gray-50 border-gray-300 text-black"
+        }`}
+      />
+
+      <input
+        type="number"
+        placeholder="Edad"
+        value={edad}
+        onChange={(e) => setEdad(e.target.value)}
+        className={`border p-2 rounded transition ${
+          darkMode
+            ? "bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+            : "bg-gray-50 border-gray-300 text-black"
+        }`}
+      />
+
+      <input
+        type="number"
+        placeholder="Altura (cm)"
+        value={altura}
+        onChange={(e) => setAltura(e.target.value)}
+        className={`border p-2 rounded transition ${
+          darkMode
+            ? "bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+            : "bg-gray-50 border-gray-300 text-black"
+        }`}
+      />
+
+      <input
+        type="number"
+        placeholder="Peso (kg)"
+        value={peso}
+        onChange={(e) => setPeso(e.target.value)}
+        className={`border p-2 rounded transition ${
+          darkMode
+            ? "bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+            : "bg-gray-50 border-gray-300 text-black"
+        }`}
+      />
+
+      <input
+        type="text"
+        placeholder="Categoría"
+        value={categoria}
+        onChange={(e) => setCategoria(e.target.value)}
+        className={`border p-2 rounded transition ${
+          darkMode
+            ? "bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+            : "bg-gray-50 border-gray-300 text-black"
+        }`}
+      />
+
+      <input
+        type="text"
+        placeholder="Posición"
+        value={posicion}
+        onChange={(e) => setPosicion(e.target.value)}
+        className={`border p-2 rounded transition ${
+          darkMode
+            ? "bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+            : "bg-gray-50 border-gray-300 text-black"
+        }`}
+      />
+
+      <input
+        type="text"
+        placeholder="Historial de lesiones"
+        value={historialLesiones}
+        onChange={(e) => setHistorialLesiones(e.target.value)}
+        className={`border p-2 rounded transition ${
+          darkMode
+            ? "bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+            : "bg-gray-50 border-gray-300 text-black"
+        }`}
+      />
+
+      <input
+        type="text"
+        placeholder="Teléfono"
+        value={telefono}
+        onChange={(e) => setTelefono(e.target.value)}
+        className={`border p-2 rounded transition ${
+          darkMode
+            ? "bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+            : "bg-gray-50 border-gray-300 text-black"
+        }`}
+      />
+
+      <input
+        type="text"
+        placeholder="DNI"
+        value={dni}
+        onChange={(e) => setDni(e.target.value)}
+        className={`border p-2 rounded transition ${
+          darkMode
+            ? "bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+            : "bg-gray-50 border-gray-300 text-black"
+        }`}
+      />
+
+      <input
+        type="email"
+        placeholder="Correo"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        className={`border p-2 rounded transition ${
+          darkMode
+            ? "bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+            : "bg-gray-50 border-gray-300 text-black"
+        }`}
+      />
+
+      <input
+        type="password"
+        placeholder="Contraseña"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        className={`border p-2 rounded transition ${
+          darkMode
+            ? "bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+            : "bg-gray-50 border-gray-300 text-black"
+        }`}
+      />
+
+      <button
+        onClick={handleRegistro}
+        className={`p-2 rounded font-semibold transition ${
+          darkMode
+            ? "bg-green-700 text-white hover:bg-green-800"
+            : "bg-green-600 text-white hover:bg-green-700"
+        }`}
+      >
+        Crear cuenta
+      </button>
+
     </div>
   );
 };
