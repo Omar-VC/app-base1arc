@@ -13,6 +13,7 @@ import Aprobaciones from "./pages/Aprobaciones";
 import CuotasJugadorWrapper from "./pages/CuotasJugadorWrapper";
 import FichaJugadorWrapper from "./pages/FichaJugadorWrapper";
 import RegistroManager from "./pages/RegistroManager";
+import GenerarInvitacion from "./components/GenerarInvitacion";
 
 
 
@@ -46,6 +47,7 @@ function App() {
         <Route path="/aprobaciones" element={<Aprobaciones />} />
 
         <Route path="/registro-manager" element={<RegistroManager />} />
+        <Route path="/generar-invitacion" element={<GenerarInvitacion />} />
 
 
         {/* Jugador */}
