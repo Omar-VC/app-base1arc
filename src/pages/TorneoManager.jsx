@@ -36,7 +36,8 @@ export default function TorneoManager() {
         </h1>
 
         <button
-          onClick={() => navigate("/torneo/crear")}
+          onClick={() => navigate("/manager/torneo/crear")}
+
           className="px-5 py-2 rounded-lg bg-[#365486] text-white font-semibold hover:bg-[#2b3f66] transition"
         >
           + Crear Torneo
