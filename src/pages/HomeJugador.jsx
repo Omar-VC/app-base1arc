@@ -41,10 +41,8 @@ export default function HomeJugador() {
         </div>
 
         {/* Torneo */}
-        <TorneoCard
-          ruta="/torneo"
-          descripcion="Ver torneos y posiciones"
-        />
+        <TorneoCard ruta="/jugador/torneo" descripcion="Ver torneos" />
+
       </div>
     </div>
   );
