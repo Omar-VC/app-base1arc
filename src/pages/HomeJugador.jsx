@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { db } from "../firebase/firebase";
 import { collection, getDocs } from "firebase/firestore";
+import TorneoCard from "../components/TorneoCard";
 
 export default function HomeJugador() {
   const navigate = useNavigate();
@@ -38,6 +39,12 @@ export default function HomeJugador() {
         >
           Mi Ficha
         </div>
+
+        {/* Torneo */}
+        <TorneoCard
+          ruta="/torneo"
+          descripcion="Ver torneos y posiciones"
+        />
       </div>
     </div>
   );

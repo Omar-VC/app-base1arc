@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import TorneoCard from "../components/TorneoCard";
 
 export default function HomeManager() {
   const navigate = useNavigate();
@@ -18,6 +19,11 @@ export default function HomeManager() {
           <h2 className="text-xl font-bold mb-2">Jugadores</h2>
           <p className="text-white/90">Ir a la lista de jugadores</p>
         </div>
+
+        {/* Tarjeta Torneo */}
+        <TorneoCard ruta="/manager/torneo" />
+
+
       </div>
     </div>
   );
